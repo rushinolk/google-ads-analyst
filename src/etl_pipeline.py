@@ -26,7 +26,7 @@ def clean_cost_and_sale_amount(df):
 
     for col in coluns_replace:
         if col in df.columns:
-            df[col] = df[col].replace('[\$,]', '', regex=True).astype(float)
+            df[col] = df[col].str.replace('$', '', regex=False).astype(float)
         else:
             logging.warning(f"Warning: Column '{col}' not found in DataFrame.")
 

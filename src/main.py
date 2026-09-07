@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 import logging
-from src.etl_pipeline import main_data
+from etl_pipeline import main_data
 
 
 load_dotenv()
