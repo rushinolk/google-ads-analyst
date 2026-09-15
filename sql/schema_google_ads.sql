@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS fct_anuncio (
 	id_device INT REFERENCES dim_device(id_device),
 	id_keyword INT REFERENCES dim_keyword(id_keyword),
 	clicks INT,
-	impressons INT,
+	impressions INT,
 	cost FLOAT,
 	leads INT,
-	conversons INT,
+	conversions INT,
 	sale_amount FLOAT,
 	ad_date DATE
 );

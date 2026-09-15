@@ -17,7 +17,7 @@ db = os.getenv("POSTGRES_DB")
 
 file_path = "data/GoogleAds_DataAnalytics_Sales_Uncleaned.csv"
 table_name = "staging_ads"
-
+os.makedirs('log', exist_ok=True)  # Cria o diretório 'log' se não existir
 
 # Cria a engine usando as variaveis do container
 engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db}")
