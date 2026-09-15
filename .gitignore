@@ -3,3 +3,4 @@ data/
 .env
 log/
 explore.ipynb
+src/__pycache__/
