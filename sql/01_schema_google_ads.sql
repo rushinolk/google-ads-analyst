@@ -32,3 +32,5 @@ CREATE TABLE IF NOT EXISTS fct_anuncio (
 	sale_amount FLOAT,
 	ad_date DATE
 );
+
+
