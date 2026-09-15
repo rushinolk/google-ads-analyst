@@ -8,6 +8,7 @@ def extract_data(file_path):
 
     try:
         data = pd.read_csv(file_path)
+        data.columns = data.columns.str.lower()
         return data
     
     except FileNotFoundError:
