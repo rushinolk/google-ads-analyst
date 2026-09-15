@@ -23,7 +23,7 @@ def clean_cost_and_sale_amount(df):
         logging.error("Error: No data to clean.")
         return None
 
-    coluns_replace = ['Cost','Sale_Amount']
+    coluns_replace = ['cost','sale_amount']
 
     for col in coluns_replace:
         if col in df.columns:
@@ -35,20 +35,20 @@ def clean_cost_and_sale_amount(df):
 
 def clean_ad_date(df):
     # 1. Padroniza todos os separadores para hífen '-' em toda a coluna
-    ad_date_clean = df['Ad_Date'].astype(str).str.replace('/', '-', regex=False)
+    ad_date_clean = df['ad_date'].astype(str).str.replace('/', '-', regex=False)
 
     # 2. Tenta fazer a conversão rápida dos dois padrões principais (AAAA-MM-DD e DD-MM-AAAA)
     s1 = pd.to_datetime(ad_date_clean, format='%Y-%m-%d', errors='coerce')
     s2 = pd.to_datetime(ad_date_clean, format='%d-%m-%Y', errors='coerce')
 
     # 3. Preenche as lacunas combinando as conversões
-    df['Ad_Date'] = s1.fillna(s2)
+    df['ad_date'] = s1.fillna(s2)
 
     # 4. (Opcional - Fallback) Se ainda sobrar algum formato exótico que virou NaT,
     # usa o parâmetro 'mixed' do Pandas 2.0+ apenas nas linhas restantes:
-    if df['Ad_Date'].isna().any():
-        mask = df['Ad_Date'].isna()
-        df.loc[mask, 'Ad_Date'] = pd.to_datetime(
+    if df['ad_date'].isna().any():
+        mask = df['ad_date'].isna()
+        df.loc[mask, 'ad_date'] = pd.to_datetime(
             ad_date_clean[mask], 
             format='mixed', 
             dayfirst=True, 
@@ -65,7 +65,7 @@ def convert_columns_to_numeric(df):
         logging.error("Error: No data to convert columns.")
         return None
     
-    columns_convert = ['Clicks', 'Impressions', 'Leads', 'Conversions']
+    columns_convert = ['clicks', 'impressions', 'leads', 'conversions']
 
     for col in columns_convert:
         if col in df.columns:
@@ -97,7 +97,7 @@ def clean_data(df):
         df = clean_cost_and_sale_amount(df)
         df = clean_ad_date(df)
         df = convert_columns_to_numeric(df)
-        df = drop_columns(df, ['Conversion Rate'])
+        df = drop_columns(df, ['conversion rate'])
         logging.info("Data cleaning completed successfully.")
     else:
         logging.error("Data cleaning failed due to extraction error.")
