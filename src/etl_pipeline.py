@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, SQLAlchemyError, text
 
 
 
@@ -23,11 +23,18 @@ def clean_cost_and_sale_amount(df):
         logging.error("Error: No data to clean.")
         return None
 
-    coluns_replace = ['cost','sale_amount']
+    columns_replace = ['cost','sale_amount']
 
-    for col in coluns_replace:
+    for col in columns_replace:
         if col in df.columns:
-            df[col] = df[col].str.replace('$', '', regex=False).astype(float)
+            df[col] = (
+                df[col]
+                .astype(str)
+                .str.replace(r'[^\d.,-]', '', regex=True)  
+                .str.replace(',', '', regex=False)          
+                .replace('', pd.NA)                         
+                .astype(float)
+            )
         else:
             logging.warning(f"Warning: Column '{col}' not found in DataFrame.")
 
@@ -35,6 +42,7 @@ def clean_cost_and_sale_amount(df):
 
 def clean_ad_date(df):
     # 1. Padroniza todos os separadores para hífen '-' em toda a coluna
+    # NaN vira 'nan' string e é convertido para NaT pelo errors='coerce'
     ad_date_clean = df['ad_date'].astype(str).str.replace('/', '-', regex=False)
 
     # 2. Tenta fazer a conversão rápida dos dois padrões principais (AAAA-MM-DD e DD-MM-AAAA)
@@ -55,8 +63,13 @@ def clean_ad_date(df):
             errors='coerce'
         )
 
-    return df
+    n_nat = df['ad_date'].isna().sum()
+    if df['ad_date'].isna().all():
+        raise ValueError("Nenhuma data convertida — verificar formatos em clean_ad_date")
+    if n_nat > 0:
+        logging.warning(f"{n_nat} datas não convertidas (NaT)")
 
+    return df
 
 
 def convert_columns_to_numeric(df):
@@ -106,33 +119,24 @@ def clean_data(df):
 
 
 
-def load_data(df,table_name,engine):
-
+def load_data(df, table_name, engine):
     if df is None:
         logging.error("Error: No data to load.")
         return None
-
     try:
-        df.to_sql( 
-                name=table_name, 
-                con=engine, 
-                if_exists='replace', 
-                index=False
-        )
+        with engine.begin() as conn:
+            conn.execute(text(f"TRUNCATE TABLE {table_name}"))
+        df.to_sql(name=table_name, con=engine, if_exists='append', index=False)
         logging.info(f"Data loaded successfully into table '{table_name}'.")
-
-    except Exception as e:
+    except SQLAlchemyError as e:
         logging.error(f"Error loading data into database: {e}")
         return None
 
 
 def main_data(file_path,table_name,engine):
     
-    # 1. Extract
     df = extract_data(file_path)
-
-    # 2. Clean
     df = clean_data(df)
-
-    # 3. Load
     load_data(df,table_name,engine)
+
+    return df
