@@ -1,17 +1,39 @@
-
 CREATE OR REPLACE VIEW vw_staging_norm AS
 SELECT
-    ad_id,
-    COALESCE(NULLIF(INITCAP(TRIM(campaign_name)), ''), 'UNKNOWN') AS campaign_name,
-    COALESCE(NULLIF(INITCAP(TRIM(location)), ''), 'UNKNOWN')      AS location,
-    COALESCE(NULLIF(UPPER(TRIM(device)), ''), 'UNKNOWN')        AS device,
-    COALESCE(NULLIF(LOWER(TRIM(keyword)), ''), 'UNKNOWN')       AS keyword,
+    s.ad_id,
+    CASE
+        WHEN LOWER(TRIM(s.campaign_name)) IN (
+            'data anlytics corse',
+            'dataanalyticscourse',
+            'data analytics corse',
+            'data analytcis course',
+   			'data analytics course'  
+        ) THEN 'Data Analytics Course'
 
-    clicks,
-    impressions,
-    cost,
-    leads,
-    conversions,
-    sale_amount,
-    ad_date
-FROM staging_ads;
+        ELSE COALESCE(NULLIF(INITCAP(TRIM(s.campaign_name)), ''), 'UNKNOWN')
+    END AS campaign_name,
+
+    CASE
+        WHEN LOWER(TRIM(s.location)) IN (
+            'hyderbad',
+            'haiderbad',
+            'hyderabad',
+            'hydrebad'
+        ) THEN 'Hyderabad'
+        
+
+        ELSE COALESCE(NULLIF(INITCAP(TRIM(s.location)), ''), 'UNKNOWN')
+    END AS location,
+
+    COALESCE(NULLIF(UPPER(TRIM(s.device)), ''), 'UNKNOWN') AS device,
+    COALESCE(NULLIF(LOWER(TRIM(s.keyword)), ''), 'UNKNOWN') AS keyword,
+
+    s.clicks, 
+    s.impressions, 
+    s.cost, 
+    s.leads, 
+    s.conversions, 
+    s.sale_amount,
+    
+    s.ad_date
+FROM staging_ads s;
