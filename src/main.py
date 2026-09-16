@@ -31,11 +31,13 @@ file_handler = logging.FileHandler('log/pipeline.log', encoding='utf-8')
 
 #logging configuration
 logging.basicConfig(
-    level=logging.DEBUG, 
+    level=logging.INFO, 
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[console_handler, file_handler]
 )
 
 
-main_data(file_path,table_name,engine)
 
+if __name__ == "__main__":
+    main_data(file_path, table_name, engine)
+    engine.dispose()
