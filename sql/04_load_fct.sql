@@ -31,3 +31,10 @@ JOIN dim_location      dl ON dl.name_location  = s.location
 JOIN dim_device        dd ON dd.device         = s.device
 JOIN dim_keyword       dk ON dk.keyword        = s.keyword
 ON CONFLICT (id_anuncio) DO NOTHING;
+
+
+ALTER TABLE fct_anuncio ALTER COLUMN ad_date SET NOT NULL;
+
+ALTER TABLE fct_anuncio
+ADD CONSTRAINT fk_fct_calendario
+FOREIGN KEY (ad_date) REFERENCES dim_calendario(id_calendario);

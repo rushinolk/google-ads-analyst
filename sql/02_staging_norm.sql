@@ -28,6 +28,11 @@ SELECT
     COALESCE(NULLIF(UPPER(TRIM(s.device)), ''), 'UNKNOWN') AS device,
     COALESCE(NULLIF(LOWER(TRIM(s.keyword)), ''), 'UNKNOWN') AS keyword,
 
+    CASE WHEN s.conversions > 0 AND (s.clicks = 0 OR s.clicks IS NULL)
+        THEN TRUE 
+        ELSE FALSE 
+    END AS flag_clique_ausente,
+
     s.clicks, 
     s.impressions, 
     s.cost, 
