@@ -20,10 +20,10 @@ SELECT
     dk.id_keyword,
     COALESCE(s.clicks, 0),
     COALESCE(s.impressions, 0),
-    COALESCE(s.cost, 0),
     COALESCE(s.leads, 0),
     COALESCE(s.conversions, 0),
-    COALESCE(s.sale_amount, 0),
+    s.cost,
+    s.sale_amount,
     s.ad_date
 FROM vw_staging_norm s
 JOIN dim_campaign_name dc ON dc.campaign_name = s.campaign_name
