@@ -1,6 +1,7 @@
 import pandas as pd
 import logging
-from sqlalchemy import create_engine, SQLAlchemyError, text
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
 
 
 

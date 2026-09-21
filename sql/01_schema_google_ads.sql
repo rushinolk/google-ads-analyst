@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS fct_anuncio (
 	leads INT,
 	conversions INT,
 	sale_amount FLOAT,
-	ad_date DATE
+	ad_date DATE,
+	flag_inconsistencia_funil TEXT
 );
 
 
