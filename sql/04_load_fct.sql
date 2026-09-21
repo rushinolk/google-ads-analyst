@@ -10,7 +10,8 @@ INSERT INTO fct_anuncio (
     leads,
     conversions,
     sale_amount,
-    ad_date
+    ad_date,
+    flag_inconsistencia_funil
 )
 SELECT
     s.ad_id,
@@ -20,18 +21,18 @@ SELECT
     dk.id_keyword,
     COALESCE(s.clicks, 0),
     COALESCE(s.impressions, 0),
+    s.cost,              
     COALESCE(s.leads, 0),
     COALESCE(s.conversions, 0),
-    s.cost,
-    s.sale_amount,
-    s.ad_date
+    s.sale_amount,        
+    s.ad_date,
+    s.flag_inconsistencia_funil
 FROM vw_staging_norm s
 JOIN dim_campaign_name dc ON dc.campaign_name = s.campaign_name
 JOIN dim_location      dl ON dl.name_location  = s.location
 JOIN dim_device        dd ON dd.device         = s.device
 JOIN dim_keyword       dk ON dk.keyword        = s.keyword
 ON CONFLICT (id_anuncio) DO NOTHING;
-
 
 ALTER TABLE fct_anuncio ALTER COLUMN ad_date SET NOT NULL;
 
