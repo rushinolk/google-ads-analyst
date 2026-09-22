@@ -22,9 +22,14 @@ SELECT
         ELSE COALESCE(NULLIF(INITCAP(TRIM(s.location)), ''), 'UNKNOWN')
     END AS location,
 
-    COALESCE(NULLIF(UPPER(TRIM(s.device)), ''), 'UNKNOWN') AS device,
-    COALESCE(NULLIF(LOWER(TRIM(s.keyword)), ''), 'UNKNOWN') AS keyword,
+    COALESCE(
+            NULLIF(
+                REGEXP_REPLACE(LOWER(TRIM(s.keyword)), 'ana[a-z]{0,3}tic[a-z]{0,3}', 'analytics', 'gi'),
+            ''),
+            'UNKNOWN'
+        ) AS keyword,
 
+    COALESCE(NULLIF(UPPER(TRIM(s.device)), ''), 'UNKNOWN') AS device,
     
     CASE
         WHEN s.clicks      > 0 AND (s.impressions = 0 OR s.impressions IS NULL) THEN 'clique_sem_impressao'
